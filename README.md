@@ -1,4 +1,4 @@
-# Interpreting Protein Structure Prediction with ESMFold
+# Mechanisms of AI Protein Folding in ESMFodl
 
 ---
 
