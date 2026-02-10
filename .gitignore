@@ -1,0 +1,41 @@
+!models/
+!models/*
+.cache/
+*.parquet
+src/big_runner_prechristmas/*.parquet
+src/deduplicated_full_patch_touch.csv
+.trash/
+.venv/
+cache/
+data/
+data/activations/
+pdbs/
+outputs/
+*.npy
+tmp/
+__pycache__/
+*.npz
+# *.txt
+*.pdb
+nnsight
+*.pt
+*.json
+per_residue*.csv
+bash.sh
+clean*.csv
+
+paired*.csv
+global*.csv
+*.log*.parquet
+*.cif
+data_old/bb_motifs_local.csv*.csv
+*.log
+
+# Generated / large files
+# *.csv
+*.log
+*.tar
+*.tar.gz
+results/
+!models/
+!models/*
