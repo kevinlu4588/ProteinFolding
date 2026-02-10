@@ -4,14 +4,19 @@
 set -e
 
 ###############################################################################
-# Configuration — adjust case counts here
+# Configuration — leave empty ("") for full paper reproduction (uses each
+# script's built-in defaults).  Set to a number to limit cases, e.g. N_MODULE=5
 ###############################################################################
-N_MODULE=1          # Module patching cases
-N_BLOCK=1           # Block patching cases
-N_ABLATION=1        # Sliding window ablation cases (sequence & pairwise)
-N_STEERING=1        # Charge steering / repulsion / contact steering cases
-N_BIAS=1            # Bias analysis & bias patching cases
-N_SCALING=1         # Z scaling / gradient cases
+N_MODULE="1"          # Module patching cases (default: all 4871)
+N_BLOCK="1"           # Block patching cases (default: all 1877)
+N_ABLATION_SEQ="1"    # Sliding window sequence ablation cases (default: 400)
+N_ABLATION_PAIR="1"   # Sliding window pairwise ablation cases (default: 200)
+N_STEERING="1"        # Charge steering cases (default: all 477)
+N_REPULSION="1"       # Charge repulsion cases (default: 400)
+N_CONTACT="1"         # Contact steering cases (default: all 600)
+N_BIAS_ANALYSIS="1"   # Bias analysis cases (default: 300)
+N_BIAS_PATCHING="1"   # Bias patching cases (default: 300)
+N_SCALING="1"         # Z scaling / gradient cases (default: 400)
 
 RESULTS="results"    # Top-level output directory
 
@@ -36,9 +41,9 @@ step() { echo -e "\n====== Step $1: $2 ======\n"; }
 step_01_module_patching() {
   step 1 "Module patching"
   python src/module_patching.py \
-    --csv data/single_block_patching_successes.csv \
+    --csv data/patching_dataset.csv \
     --output_dir "$RESULTS/module_patching" \
-    --n_cases "$N_MODULE" \
+    ${N_MODULE:+--n_cases "$N_MODULE"} \
     --compute_helix
 }
 
@@ -58,9 +63,9 @@ step_02_module_plotting() {
 step_03_block_patching() {
   step 3 "Block patching"
   python src/block_patching.py \
-    --csv data/single_block_patching_successes.csv \
+    --parquet data/all_block_patching_results.parquet \
     --output_dir "$RESULTS/block_patching" \
-    --n_cases "$N_BLOCK"
+    ${N_BLOCK:+--n_cases "$N_BLOCK"}
 }
 
 ###############################################################################
@@ -82,8 +87,8 @@ step_05_sliding_window_ablation() {
     --ablation_csv data/single_block_patching_successes.csv \
     --output_dir "$RESULTS/sliding_window_ablation" \
     --compute_helix \
-    --n_sequence_cases "$N_ABLATION" \
-    --n_pairwise_cases "$N_ABLATION"
+    ${N_ABLATION_SEQ:+--n_sequence_cases "$N_ABLATION_SEQ"} \
+    ${N_ABLATION_PAIR:+--n_pairwise_cases "$N_ABLATION_PAIR"}
 }
 
 ###############################################################################
@@ -95,7 +100,7 @@ step_06_charge_steering() {
     --probing_dataset data/probing_train_test.csv \
     --target_loops_dataset data/target_loops_dataset.csv \
     --output "$RESULTS/charge_steering" \
-    --n_cases "$N_STEERING"
+    ${N_STEERING:+--n_cases "$N_STEERING"}
 }
 
 ###############################################################################
@@ -107,7 +112,7 @@ step_07_charge_repulsion() {
     --directions "$RESULTS/charge_steering/charge_directions.pt" \
     --hairpin_dataset data/single_block_patching_successes.csv \
     --output "$RESULTS/charge_repulsion" \
-    --n_cases "$N_STEERING"
+    ${N_REPULSION:+--n_cases "$N_REPULSION"}
 }
 
 ###############################################################################
@@ -119,7 +124,7 @@ step_08_contact_steering() {
     --probing_dataset data/probing_train_test.csv \
     --patch_dataset data/single_block_patching_successes.csv \
     --output "$RESULTS/contact_steering" \
-    --n_cases "$N_STEERING"
+    ${N_CONTACT:+--n_cases "$N_CONTACT"}
 }
 
 ###############################################################################
@@ -130,7 +135,7 @@ step_09a_bias_analysis() {
   python src/main_paper/bias_analysis2.py \
     --parquet data/all_block_patching_results.parquet \
     --output "$RESULTS/bias_analysis" \
-    --n-cases "$N_BIAS"
+    ${N_BIAS_ANALYSIS:+--n-cases "$N_BIAS_ANALYSIS"}
 }
 
 ###############################################################################
@@ -150,9 +155,9 @@ step_09b_bias_plotting() {
 step_09c_bias_patching() {
   step "9c" "Bias patching"
   python src/main_paper/bias_patching.py \
-    --csv data/block_patching_successes.csv \
+    --csv data/single_block_patching_successes.csv \
     --output "$RESULTS/bias_patching" \
-    --n-cases "$N_BIAS"
+    ${N_BIAS_PATCHING:+--n-cases "$N_BIAS_PATCHING"}
 }
 
 ###############################################################################
@@ -161,9 +166,9 @@ step_09c_bias_patching() {
 step_10_z_scaling() {
   step 10 "Z scaling + gradient analysis"
   python src/main_paper/z_scaling.py \
-    --parquet data/block_patching_successes.csv \
+    --parquet data/single_block_patching_successes.csv \
     --output_dir "$RESULTS/z_scaling" \
-    --n_cases "$N_SCALING"
+    ${N_SCALING:+--n_cases "$N_SCALING"}
 }
 
 ###############################################################################

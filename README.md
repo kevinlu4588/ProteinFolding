@@ -53,7 +53,7 @@ To run the full experiments, download the datasets and pre-trained models from H
 python scripts/download_from_hf.py
 ```
 
-This populates `data/`, `models/`, and `results/` from the [HuggingFace repository](https://huggingface.co/datasets/kevinlu4588/ProteinFolding/tree/main). Use `--force` to overwrite existing files.
+This populates `data/` and `results/` from the [HuggingFace repository](https://huggingface.co/datasets/kevinlu4588/ProteinFolding/tree/main). Use `--force` to overwrite existing files.
 
 ## 3. Reproducing experiments
 

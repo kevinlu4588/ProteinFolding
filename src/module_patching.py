@@ -44,6 +44,13 @@ from transformers.models.esm.openfold_utils import (
     Rigid,
     Rotation,
 )
+import sys
+import types
+
+# Add project root (parent of src/) to path so `src.*` imports work without PYTHONPATH
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
 from transformers.utils import ContextManagers
 
 from src.utils.trunk_utils import detect_hairpins
@@ -1052,11 +1059,11 @@ def main():
         description="Run all-block ESMFold patching experiments (refactored)"
     )
     parser.add_argument(
-        "--csv", type=str, default="data/patching_dataset.csv",
+        "--csv", type=str, default=os.path.join(_PROJECT_ROOT, "data", "patching_dataset.csv"),
         help="Path to patching_dataset.csv"
     )
     parser.add_argument(
-        "--output_dir", type=str, default="./results_all_blocks_v2",
+        "--output_dir", type=str, default=os.path.join(_PROJECT_ROOT,"results", "results_all_blocks_v2"),
         help="Output directory"
     )
     parser.add_argument(

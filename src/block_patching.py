@@ -12,7 +12,7 @@ This experiment reveals the temporal dynamics of structure formation: early bloc
 established early in the folding trunk's forward pass.
 
 Usage:
-    python block_patching.py --csv patching_dataset.csv --output_dir results/
+    python block_patching.py --parquet patching_dataset.parquet --output_dir results/
 """
 
 import argparse
@@ -28,7 +28,13 @@ import torch.nn as nn
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
+import sys
+import types
 
+# Add project root (parent of src/) to path so `src.*` imports work without PYTHONPATH
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
 from transformers import EsmForProteinFolding, AutoTokenizer
 from transformers.models.esm.modeling_esmfold import (
     categorical_lddt,
@@ -374,7 +380,7 @@ def generate_basic_plots(results_df: pd.DataFrame, output_dir: str):
 # ============================================================================
 
 def run_experiment_on_dataset(
-    csv_path: str,
+    parquet_path: str,
     output_dir: str,
     patch_modes: List[str] = ["sequence", "pairwise", "both"],
     patch_mask_modes: List[str] = ["intra", "touch"],
@@ -409,8 +415,9 @@ def run_experiment_on_dataset(
     print("Model loaded")
     
     # Load dataset
-    print(f"Loading patching dataset from {csv_path}...")
-    df = pd.read_csv(csv_path)
+    print(f"Loading patching dataset from {parquet_path}...")
+    df = pd.read_parquet(parquet_path)
+    df = df[(df["patch_module"] == "trunk") & (df["hairpin_found"] == True) & (df['patch_mask_mode'] == 'intra')]
     if n_cases is not None:
         df = df.head(n_cases)
     print(f"Running {len(df)} cases")
@@ -575,11 +582,11 @@ def main():
         description="Run single-block ESMFold patching experiments (refactored)"
     )
     parser.add_argument(
-        "--csv", type=str, default="data/patching_dataset.csv",
-        help="Path to patching_dataset.csv"
+        "--parquet", type=str, default=os.path.join(_PROJECT_ROOT, "data", "all_block_patching_results.parquet"),
+        help="Path to patching_dataset.parquet"
     )
     parser.add_argument(
-        "--output_dir", type=str, default="./results_single_block_v2",
+        "--output_dir", type=str, default=os.path.join(_PROJECT_ROOT, "results", "single_block_v2"),
         help="Output directory"
     )
     parser.add_argument(
@@ -610,7 +617,7 @@ def main():
     args = parser.parse_args()
     
     results_df = run_experiment_on_dataset(
-        csv_path=args.csv,
+        parquet_path=args.parquet,
         output_dir=args.output_dir,
         patch_modes=args.patch_modes,
         patch_mask_modes=args.mask_modes,
