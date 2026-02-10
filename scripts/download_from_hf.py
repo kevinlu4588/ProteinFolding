@@ -10,7 +10,7 @@ from huggingface_hub import HfApi, login, snapshot_download
 
 REPO_ID = "kevinlu4588/ProteinFolding"
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-FOLDERS = ["data", "models", "results"]
+FOLDERS = ["data", "results"]
 
 
 def parse_args():

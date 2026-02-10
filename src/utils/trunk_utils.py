@@ -59,7 +59,9 @@ def run_dssp_from_outputs(outputs, model, batch_idx=0):
     model0 = structure[0]
 
     try:
-        dssp = DSSP(model0, pdb_path, dssp="mkdssp")
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=UserWarning, module="Bio.PDB.DSSP")
+            dssp = DSSP(model0, pdb_path, dssp="mkdssp")
     except Exception as e:
         warnings.warn(f"DSSP failed: {e}", RuntimeWarning)
         return None, None, None
@@ -90,7 +92,9 @@ def run_dssp_on_pdb(pdb_path):
 
     try:
         # DSSP requires both structure object + path to the PDB file
-        dssp = DSSP(model0, pdb_path, dssp="mkdssp")
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=UserWarning, module="Bio.PDB.DSSP")
+            dssp = DSSP(model0, pdb_path, dssp="mkdssp")
     except Exception as e:
         warnings.warn(f"DSSP failed: {e}", RuntimeWarning)
         return None, None

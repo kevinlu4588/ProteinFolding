@@ -892,7 +892,7 @@ def main():
     print("Model loaded")
     
     print(f"\nLoading dataset from {args.dataset}...")
-    df = pd.read_parquet(args.dataset)
+    df = pd.read_csv(args.dataset)
     print(f"Loaded {len(df)} rows")
     print("\nBreakdown:")
     print(df.groupby(['patch_mode', 'patch_mask_mode', 'block_idx']).size())

@@ -633,9 +633,12 @@ def compute_alpha_helix_content(pdb_string: str) -> Tuple[Optional[int], Optiona
         parser = PDB.PDBParser(QUIET=True)
         structure = parser.get_structure("model", pdb_path)
         model0 = structure[0]
-        
+
         try:
-            dssp = DSSP(model0, pdb_path, dssp="mkdssp")
+            import warnings
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore", category=UserWarning, module="Bio.PDB.DSSP")
+                dssp = DSSP(model0, pdb_path, dssp="mkdssp")
         except Exception as e:
             print(f"DSSP failed: {e}")
             return None, None, None

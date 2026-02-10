@@ -120,6 +120,38 @@ def plot_hairpin_retention(
     return fig
 
 
+def print_ablation_summary(df: pd.DataFrame):
+    """Print a summary table of hairpin retention rates by ablation type and window size."""
+    print("\n=== Ablation Summary ===")
+    print(f"Total results: {len(df)}")
+    for ablation_type in sorted(df['ablation_type'].unique()):
+        subset = df[df['ablation_type'] == ablation_type]
+        retention = subset['hairpin_found'].mean() * 100
+        print(f"  {ablation_type}: {retention:.1f}% hairpin retention ({len(subset)} cases)")
+
+    if 'window_size' in df.columns:
+        print("\nBy window size:")
+        for ws in sorted(df['window_size'].unique()):
+            subset = df[df['window_size'] == ws]
+            retention = subset['hairpin_found'].mean() * 100
+            print(f"  window_size={ws}: {retention:.1f}% ({len(subset)} cases)")
+    print()
+
+
+def generate_ablation_plots(df: pd.DataFrame, output_dir: str):
+    """Generate ablation plots for each window size and patch mode combination."""
+    import os
+    os.makedirs(output_dir, exist_ok=True)
+
+    window_sizes = sorted(df['window_size'].unique())
+    patch_modes = df['patch_mode'].unique() if 'patch_mode' in df.columns else ['sequence']
+
+    for ws in window_sizes:
+        for pm in patch_modes:
+            output_path = os.path.join(output_dir, f'hairpin_retention_w{ws}_{pm}.png')
+            plot_hairpin_retention(df, window_size=ws, patch_mode=pm, output_path=output_path)
+
+
 def main():
     parser = argparse.ArgumentParser(description='Plot hairpin retention for ablation experiments')
     parser.add_argument('--csv', type=str, required=True,

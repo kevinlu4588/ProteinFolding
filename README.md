@@ -2,7 +2,7 @@
 
 ---
 
-[Project website](https://folding.baulab.info/) | [Paper on arXiv](https://arxiv.org/abs/2602.06020) | [Dataset on HuggingFace](https://huggingface.co/datasets/kevinlu4588/ProteinFolding/tree/main)
+## [Project website](https://folding.baulab.info/) | [Paper on arXiv](https://arxiv.org/abs/2602.06020) | [Dataset on HuggingFace](https://huggingface.co/datasets/kevinlu4588/ProteinFolding/tree/main)
 
 ![Figure 1](Figure1.png)
 

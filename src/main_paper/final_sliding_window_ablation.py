@@ -888,8 +888,6 @@ def run_ablation_experiment(
     Returns:
         DataFrame with ablation results
     """
-    from sliding_window_plotting import generate_ablation_plots, print_ablation_summary
-    
     # Setup
     os.makedirs(output_dir, exist_ok=True)
     
@@ -1066,6 +1064,7 @@ def run_ablation_experiment(
             
                 # Generate plots
                 try:
+                    from sliding_window_plotting import generate_ablation_plots, print_ablation_summary
                     print_ablation_summary(results_df)
                     generate_ablation_plots(results_df, plots_dir)
                 except Exception as e:
@@ -1097,6 +1096,7 @@ def run_ablation_experiment(
     
     # Final plots
     try:
+        from sliding_window_plotting import generate_ablation_plots, print_ablation_summary
         print_ablation_summary(results_df)
         generate_ablation_plots(results_df, plots_dir)
     except Exception as e:
